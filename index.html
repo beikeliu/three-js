@@ -1,0 +1,77 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>My first three.js app</title>
+  <style>
+    body {
+      margin: 0;
+    }
+
+    nav {
+      position: absolute;
+      top: 20px;
+      left: 200px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    
+  </nav>
+  <script type="module">
+    import Stats from './stats.module.js';
+    import * as THREE from './three.module.js';
+    import { OrbitControls } from './OrbitControls.js';
+    const body = document.body;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    body.appendChild(renderer.domElement);
+    camera.position.set(5,15,20)
+    const cone = new THREE.Mesh(new THREE.ConeGeometry(0.25, 0.5), new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+    scene.add(cone);
+    cone.name = 'cone'
+    cone.position.set(1, 1, 1)
+    const points = [new THREE.Vector3(2, 2, 2), new THREE.Vector3(15, 2.5, 2.5)];
+    const pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
+    const line = new THREE.Line(pointsGeometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+    scene.add(line);
+    line.name = 'line';
+    const controls = new OrbitControls(camera, renderer.domElement);
+    const axesHelper = new THREE.AxesHelper(20);
+    scene.add(axesHelper);
+    axesHelper.name = 'axesHelper'
+    const sphere = new THREE.SphereGeometry();
+    const box = new THREE.BoxHelper(new THREE.Mesh(new THREE.BoxGeometry(40, 40, 40)), 0xffff00);
+    scene.add(box);
+    box.name = 'box'
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    window.addEventListener("click", (event) => {
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = - (event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const intersects = raycaster.intersectObjects(scene.children);
+      for (let i = 0; i < intersects.length; i++) {
+        console.log(intersects[i].object.name,intersects[i].point);
+      }
+    });
+    const stats = new Stats();
+    stats.showPanel(0);
+    document.body.appendChild(stats.dom);
+
+    
+    function animate() {
+      stats.begin();
+      renderer.render(scene, camera);
+      stats.end();
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+
+</html>
