@@ -24,6 +24,8 @@
     import Stats from './stats.module.js';
     import * as THREE from './three.module.js';
     import { OrbitControls } from './OrbitControls.js';
+    import { DragControls } from './DragControls.js';
+
     const body = document.body;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -35,6 +37,13 @@
     scene.add(cone);
     cone.name = 'cone'
     cone.position.set(1, 1, 1)
+    const drag = new DragControls( [cone], camera, renderer.domElement );
+    drag.addEventListener('dragstart',() => {
+      controls.enabled = false;
+    })
+    drag.addEventListener('dragend',() => {
+      controls.enabled = true;
+    })
     const points = [new THREE.Vector3(2, 2, 2), new THREE.Vector3(15, 2.5, 2.5)];
     const pointsGeometry = new THREE.BufferGeometry().setFromPoints(points);
     const line = new THREE.Line(pointsGeometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
